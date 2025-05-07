@@ -1,6 +1,6 @@
-# API Маркетплейса E-Commerce
+# API Маркетплейса AlloraUni
 
-Backend на FastAPI для маркетплейса электронной коммерции, аналогичного Ozon, с использованием PostgreSQL, SQLAlchemy ORM, Pydantic и JWT аутентификации.
+Backend на FastAPI для маркетплейса электронной коммерции с использованием PostgreSQL, SQLAlchemy ORM, Pydantic и JWT аутентификации.
 
 ## Функциональность
 
