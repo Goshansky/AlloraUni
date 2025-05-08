@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "password"
     POSTGRES_DB: str = "allora_uni"
-    POSTGRES_PORT: str = "5431"
+    POSTGRES_PORT: int = 5431
     DATABASE_URI: Optional[PostgresDsn] = None
     
     @field_validator("DATABASE_URI", mode="before")
@@ -50,15 +50,17 @@ class Settings(BaseSettings):
     ) -> PostgresDsn:
         if isinstance(v, str):
             return PostgresDsn(v)
-        
+    
+        db_name = values.data.get('POSTGRES_DB')
+    
         return PostgresDsn.build(
             scheme="postgresql+asyncpg",
             username=values.data.get("POSTGRES_USER"),
             password=values.data.get("POSTGRES_PASSWORD"),
             host=values.data.get("POSTGRES_SERVER"),
             port=values.data.get("POSTGRES_PORT"),
-            path=f"/{values.data.get('POSTGRES_DB')}"
-        )
+            path=f"{db_name}"
+    )
 
 
 settings = Settings() 

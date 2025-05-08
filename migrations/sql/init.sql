@@ -1,9 +1,3 @@
--- Создание базы данных
-CREATE DATABASE IF NOT EXISTS allora_uni;
-
--- Подключение к базе данных
-\c allora_uni;
-
 -- Создание таблицы пользователей
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

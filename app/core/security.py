@@ -5,10 +5,12 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.db.base import get_db
 from app.models.user import User
-from app.services.user import get_user_by_email
+from app.services.auth import get_user_by_email
 
 # Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -69,12 +71,16 @@ def create_refresh_token(subject: Union[str, Any], expires_delta: Optional[timed
     return encoded_jwt
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
+async def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_db)
+) -> User:
     """
     Get the current user from a JWT token.
     
     Args:
         token: JWT token
+        db: Database session
         
     Returns:
         User object
@@ -103,7 +109,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     except JWTError:
         raise credentials_exception
     
-    user = await get_user_by_email(user_id)
+    user = await get_user_by_email(user_id, db)
     if user is None:
         raise credentials_exception
     
