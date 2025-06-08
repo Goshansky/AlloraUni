@@ -20,4 +20,4 @@ def get_current_admin_dependency():
 
 def get_db_dependency():
     """Dependency for getting the database session."""
-    return Depends(get_db) 
+    return Depends(get_db)

@@ -1,5 +1,5 @@
 import secrets
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from pydantic import AnyHttpUrl, PostgresDsn, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -24,15 +24,15 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     
     # CORS
-    ALLOWED_ORIGINS: List[AnyHttpUrl] = []
+    ALLOWED_ORIGINS: Union[List[str], List[AnyHttpUrl], str] = ["*"]
     
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod
-    def assemble_cors_origins(cls, v: str | List[str]) -> List[AnyHttpUrl]:
+    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         if isinstance(v, str) and not v.startswith("["):
-            return [AnyHttpUrl(v)]
+            return [v]
         elif isinstance(v, (list, str)):
-            return [AnyHttpUrl(origin) for origin in v]
+            return v
         raise ValueError(v)
     
     # Database

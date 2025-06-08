@@ -9,18 +9,37 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: allora_uni
     volumes:
-      # "./migrations/sql/init.sql" - путь к миграциям БД
+      - postgres_data:/var/lib/postgresql/data
       - ./migrations/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5431:5432"
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d allora_uni_db'"]
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d allora_uni'"]
       interval: 5s
       timeout: 10s
       retries: 5
       start_period: 10s
     networks:
       - internal
+
+  api:
+    build: .
+    container_name: allora_uni_api
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_SERVER=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=allora_uni
+      - POSTGRES_PORT=5432
+    ports:
+      - "8000:8000"
+    networks:
+      - internal
+
+volumes:
+  postgres_data:
 
 networks:
   internal:

@@ -28,6 +28,21 @@ async def get_user_by_email(email: str, db: AsyncSession = None) -> Optional[Use
     return None
 
 
+async def get_user_by_username(username: str, db: AsyncSession) -> Optional[User]:
+    """
+    Get a user by username.
+    
+    Args:
+        username: User's username
+        db: Database session
+        
+    Returns:
+        User object if found, None otherwise
+    """
+    result = await db.execute(select(User).where(User.username == username))
+    return result.scalars().first()
+
+
 async def get_user_by_id(user_id: UUID, db: AsyncSession) -> Optional[User]:
     """
     Get a user by ID.
